@@ -1,5 +1,6 @@
-package com.xuexiang.composedemo.ui.page
+package com.xuexiang.composedemo.ui.page.home.test
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -15,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xuexiang.composedemo.R
@@ -30,9 +33,13 @@ fun TestListScreen() {
             }
         }
 
-        val newList = list.chunked(3)
-        items(newList.size) { index ->
-            VerticalGridView(newList, index) {
+        item {
+            VerticalGridView(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                data = list,
+                spanCount = 3,
+                space = 10.dp
+            ) {
                 GridItem(it)
             }
         }
@@ -47,15 +54,28 @@ fun TestListScreen() {
 
 @Composable
 private fun <T> VerticalGridView(
-    newList: List<List<T>>, rowIndex: Int, content: @Composable BoxScope.(item: T) -> Unit
+    modifier: Modifier = Modifier,
+    rowModifier: Modifier = Modifier,
+    data: List<T>,
+    spanCount: Int,
+    space: Dp,
+    content: @Composable BoxScope.(item: T) -> Unit
 ) {
-    Row {
-        for ((columnIndex, item) in newList[rowIndex].withIndex()) {
-            Box(
-                modifier = Modifier.fillMaxWidth(1f / (3 - columnIndex)),
-                contentAlignment = Alignment.Center
+    Column(
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(space)
+    ) {
+        data.chunked(spanCount).forEach { rowItem ->
+            Row(
+                modifier = rowModifier, horizontalArrangement = Arrangement.spacedBy(space)
             ) {
-                content(item)
+                rowItem.forEachIndexed { index, item ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth(1f / (spanCount - index)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        content(item)
+                    }
+                }
             }
         }
     }
@@ -63,7 +83,7 @@ private fun <T> VerticalGridView(
 
 @Composable
 private fun GridItem(item: String) {
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Icon(
             painter = painterResource(id = R.drawable.ic_launcher_background),
             contentDescription = null

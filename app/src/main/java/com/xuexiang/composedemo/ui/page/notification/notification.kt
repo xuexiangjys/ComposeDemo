@@ -1,4 +1,4 @@
-package com.xuexiang.composedemo.ui.page.favorite
+package com.xuexiang.composedemo.ui.page.notification
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-fun FavoriteScreen(navController: NavController) {
+fun NotificationScreen(navController: NavController) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
-            text = "FavoriteScreen"
+            text = "NotificationScreen"
         )
     }
 }
