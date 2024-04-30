@@ -1,6 +1,6 @@
 # ComposeDemo
 
-compose的使用演示
+Compose的使用演示, Compose官方文档: https://developer.android.com/develop/ui/compose/documentation?hl=zh-cn
 
 ## 关于我
 
