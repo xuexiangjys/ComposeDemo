@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.xuexiang.composedemo.ui.page.cart.CartScreen
+import com.xuexiang.composedemo.ui.page.component.ButtonScreen
 import com.xuexiang.composedemo.ui.page.component.ComponentScreen
 import com.xuexiang.composedemo.ui.page.component.ImageLoadScreen
 import com.xuexiang.composedemo.ui.page.home.HomeScreen
@@ -39,6 +40,7 @@ sealed class HomeScreen(route: String, title: String) : Screen(route, title) {
 }
 
 sealed class ComponentScreen(route: String, title: String) : Screen(route, title) {
+    data object Button : ComponentScreen("component/button", "按钮")
     data object ImageLoad : ComponentScreen("component/image_load", "图片加载")
 }
 
@@ -55,6 +57,7 @@ val HomePages = listOf(
 )
 
 val ComponentPages = listOf(
+    ComponentScreen.Button,
     ComponentScreen.ImageLoad
 )
 
@@ -70,6 +73,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
 
         composableScreen(HomeScreen.TestList, navController) { TestListScreen() }
 
+        composableScreen(ComponentScreen.Button, navController) { ButtonScreen() }
         composableScreen(ComponentScreen.ImageLoad, navController) { ImageLoadScreen() }
     }
 }

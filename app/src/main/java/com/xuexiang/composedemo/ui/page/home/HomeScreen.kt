@@ -10,8 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.xuexiang.composedemo.navi.HomePages
-import com.xuexiang.composedemo.navi.navigationTo
-import com.xuexiang.composedemo.ui.widget.CardItem
+import com.xuexiang.composedemo.ui.widget.DemoScreenItem
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -22,9 +21,7 @@ fun HomeScreen(navController: NavController) {
     ) {
         LazyColumn {
             items(HomePages.size) {
-                CardItem(HomePages[it].title) {
-                    navController.navigationTo(HomePages[it])
-                }
+                DemoScreenItem(navController, HomePages[it])
             }
         }
     }
