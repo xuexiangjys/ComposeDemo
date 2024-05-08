@@ -20,6 +20,7 @@ import com.xuexiang.composedemo.ui.page.component.ButtonScreen
 import com.xuexiang.composedemo.ui.page.component.ComponentScreen
 import com.xuexiang.composedemo.ui.page.component.DialogScreen
 import com.xuexiang.composedemo.ui.page.component.ImageLoadScreen
+import com.xuexiang.composedemo.ui.page.component.TextFieldScreen
 import com.xuexiang.composedemo.ui.page.home.HomeScreen
 import com.xuexiang.composedemo.ui.page.home.test.TestListScreen
 import com.xuexiang.composedemo.ui.page.profile.ProfileScreen
@@ -42,6 +43,7 @@ sealed class HomeScreen(route: String, title: String) : Screen(route, title) {
 
 sealed class ComponentScreen(route: String, title: String) : Screen(route, title) {
     data object Button : ComponentScreen("component/button", "按钮")
+    data object TextField : ComponentScreen("component/text_field", "输入框")
     data object ImageLoad : ComponentScreen("component/image_load", "图片加载")
     data object Dialog : ComponentScreen("component/dialog", "对话框")
 }
@@ -60,6 +62,7 @@ val HomePages = listOf(
 
 val ComponentPages = listOf(
     ComponentScreen.Button,
+    ComponentScreen.TextField,
     ComponentScreen.ImageLoad,
     ComponentScreen.Dialog,
 )
@@ -77,6 +80,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         composableScreen(HomeScreen.TestList, navController) { TestListScreen() }
 
         composableScreen(ComponentScreen.Button, navController) { ButtonScreen() }
+        composableScreen(ComponentScreen.TextField, navController) { TextFieldScreen() }
         composableScreen(ComponentScreen.ImageLoad, navController) { ImageLoadScreen() }
         composableScreen(ComponentScreen.Dialog, navController) { DialogScreen() }
     }
