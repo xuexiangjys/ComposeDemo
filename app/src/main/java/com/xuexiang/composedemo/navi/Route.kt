@@ -20,6 +20,8 @@ import com.xuexiang.composedemo.ui.page.component.ButtonScreen
 import com.xuexiang.composedemo.ui.page.component.ComponentScreen
 import com.xuexiang.composedemo.ui.page.component.DialogScreen
 import com.xuexiang.composedemo.ui.page.component.ImageLoadScreen
+import com.xuexiang.composedemo.ui.page.component.ProgressIndicatorScreen
+import com.xuexiang.composedemo.ui.page.component.SwitchScreen
 import com.xuexiang.composedemo.ui.page.component.TextFieldScreen
 import com.xuexiang.composedemo.ui.page.home.HomeScreen
 import com.xuexiang.composedemo.ui.page.home.test.TestListScreen
@@ -45,6 +47,8 @@ sealed class ComponentScreen(route: String, title: String) : Screen(route, title
     data object Button : ComponentScreen("component/button", "按钮")
     data object TextField : ComponentScreen("component/text_field", "输入框")
     data object ImageLoad : ComponentScreen("component/image_load", "图片加载")
+    data object ProgressIndicator : ComponentScreen("component/progress_indicator", "进度条")
+    data object Switch : ComponentScreen("component/switch", "开关")
     data object Dialog : ComponentScreen("component/dialog", "对话框")
 }
 
@@ -64,6 +68,8 @@ val ComponentPages = listOf(
     ComponentScreen.Button,
     ComponentScreen.TextField,
     ComponentScreen.ImageLoad,
+    ComponentScreen.ProgressIndicator,
+    ComponentScreen.Switch,
     ComponentScreen.Dialog,
 )
 
@@ -82,6 +88,8 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         composableScreen(ComponentScreen.Button, navController) { ButtonScreen() }
         composableScreen(ComponentScreen.TextField, navController) { TextFieldScreen() }
         composableScreen(ComponentScreen.ImageLoad, navController) { ImageLoadScreen() }
+        composableScreen(ComponentScreen.ProgressIndicator, navController) { ProgressIndicatorScreen() }
+        composableScreen(ComponentScreen.Switch, navController) { SwitchScreen() }
         composableScreen(ComponentScreen.Dialog, navController) { DialogScreen() }
     }
 }

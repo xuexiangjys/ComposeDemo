@@ -40,7 +40,7 @@ fun ScrollColumnArea(modifier: Modifier = Modifier, content: @Composable ColumnS
 }
 
 @Composable
-fun Toast(
+fun ToastComponent(
     modifier: Modifier = Modifier,
     message: String,
     backgroundColor: Color = Color.DarkGray,
