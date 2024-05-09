@@ -23,6 +23,7 @@ import com.xuexiang.composedemo.ui.page.component.ImageLoadScreen
 import com.xuexiang.composedemo.ui.page.component.ProgressIndicatorScreen
 import com.xuexiang.composedemo.ui.page.component.SwitchScreen
 import com.xuexiang.composedemo.ui.page.component.TextFieldScreen
+import com.xuexiang.composedemo.ui.page.component.TextScreen
 import com.xuexiang.composedemo.ui.page.home.HomeScreen
 import com.xuexiang.composedemo.ui.page.home.test.TestListScreen
 import com.xuexiang.composedemo.ui.page.profile.ProfileScreen
@@ -44,6 +45,7 @@ sealed class HomeScreen(route: String, title: String) : Screen(route, title) {
 }
 
 sealed class ComponentScreen(route: String, title: String) : Screen(route, title) {
+    data object Text : ComponentScreen("component/text", "文本")
     data object Button : ComponentScreen("component/button", "按钮")
     data object TextField : ComponentScreen("component/text_field", "输入框")
     data object ImageLoad : ComponentScreen("component/image_load", "图片加载")
@@ -65,12 +67,13 @@ val HomePages = listOf(
 )
 
 val ComponentPages = listOf(
+    ComponentScreen.Text,
     ComponentScreen.Button,
     ComponentScreen.TextField,
+    ComponentScreen.Dialog,
     ComponentScreen.ImageLoad,
     ComponentScreen.ProgressIndicator,
     ComponentScreen.Switch,
-    ComponentScreen.Dialog,
 )
 
 @Composable
@@ -85,12 +88,13 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
 
         composableScreen(HomeScreen.TestList, navController) { TestListScreen() }
 
+        composableScreen(ComponentScreen.Text, navController) { TextScreen() }
         composableScreen(ComponentScreen.Button, navController) { ButtonScreen() }
         composableScreen(ComponentScreen.TextField, navController) { TextFieldScreen() }
+        composableScreen(ComponentScreen.Dialog, navController) { DialogScreen() }
         composableScreen(ComponentScreen.ImageLoad, navController) { ImageLoadScreen() }
         composableScreen(ComponentScreen.ProgressIndicator, navController) { ProgressIndicatorScreen() }
         composableScreen(ComponentScreen.Switch, navController) { SwitchScreen() }
-        composableScreen(ComponentScreen.Dialog, navController) { DialogScreen() }
     }
 }
 
