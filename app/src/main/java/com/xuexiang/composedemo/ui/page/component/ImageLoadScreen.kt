@@ -1,7 +1,9 @@
 package com.xuexiang.composedemo.ui.page.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -30,12 +32,14 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.xuexiang.composedemo.R
 import com.xuexiang.composedemo.ui.widget.ScrollColumnArea
+import com.xuexiang.composedemo.ui.widget.rainbowBrush
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
  * coil:   https://coil-kt.github.io/coil/compose/
  * glide:  https://bumptech.github.io/glide/int/compose.html
+ * google:  https://developer.android.com/develop/ui/compose/graphics/images?hl=zh-cn
  */
 @OptIn(ExperimentalCoilApi::class, ExperimentalGlideComposeApi::class)
 @Composable
@@ -87,7 +91,10 @@ fun ImageLoadScreen() {
         Text(text = "glide-组件使用: GlideImage")
         GlideImage(
             modifier = Modifier
-                .size(200.dp)
+                .aspectRatio(1f)
+                .border(
+                    BorderStroke(width = 4.dp, brush = rainbowBrush()), shape = CircleShape
+                )
                 .clip(CircleShape),
             model = "https://cdn.pixabay.com/photo/2024/01/12/13/00/field-8503934_1280.jpg",
             loading = placeholder(R.drawable.ic_default_img),
@@ -97,3 +104,4 @@ fun ImageLoadScreen() {
         )
     }
 }
+

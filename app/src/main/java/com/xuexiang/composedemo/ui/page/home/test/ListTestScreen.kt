@@ -24,7 +24,7 @@ import com.xuexiang.composedemo.R
 import com.xuexiang.composedemo.ui.theme.ComposeDemoTheme
 
 @Composable
-fun TestListScreen() {
+fun ListTestScreen() {
     val list = listOf("11", "22", "33", "aa", "bb", "cc", "dd")
     LazyColumn {
         item {
