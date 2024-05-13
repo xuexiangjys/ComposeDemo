@@ -6,9 +6,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -55,27 +59,47 @@ fun AppRoot() {
             SnackbarHost(hostState = snackBarHostState)
         },
         bottomBar = {
-            BottomAppBar(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.primary,
-            ) {
-                BottomNavigationBar(navController, MainPages, modifier = Modifier.fillMaxSize()) {
-                    title = it.title
-                }
+            BottomAppBarComponent(navController) {
+                title = it.title
             }
+//            BottomNavigationComponent(navController) {
+//                title = it.title
+//            }
         },
     ) { innerPadding ->
         MainNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
     }
 }
 
+@Composable
+private fun BottomAppBarComponent(
+    navController: NavHostController, onPageChanged: OnPageChanged
+) {
+    BottomAppBar(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.primary,
+    ) {
+        BottomNavigationBar(
+            navController = navController,
+            items = MainPages,
+            modifier = Modifier.fillMaxSize(),
+            itemContent = { screen, isSelected, onItemClicked ->
+                BottomBarItem(
+                    item = screen, isSelected = isSelected, onItemClicked = onItemClicked
+                )
+            },
+            onPageChanged = onPageChanged
+        )
+    }
+}
 
 @Composable
 fun BottomNavigationBar(
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     items: List<MainScreen>,
-    modifier: Modifier = Modifier,
-    onPageChanged: (MainScreen) -> Unit
+    itemContent: @Composable RowScope.(screen: MainScreen, isSelected: Boolean, OnPageChanged) -> Unit,
+    onPageChanged: OnPageChanged
 ) {
     //获取当前的 NavBackStackEntry 来访问当前的 NavDestination
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -86,14 +110,11 @@ fun BottomNavigationBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         items.forEachIndexed { _, screen ->
-            BottomBarItem(item = screen,
-                //与层次结构进行比较来确定是否被选中
-                isSelected = currentDestination?.hierarchy?.any { it.route == screen.route },
-                onItemClicked = {
-                    onPageChanged(it)
-                    //加这个可解决问题：按back键会返回2次，第一次先返回home, 第二次才会退出
-                    processBottomItemClick(navController, screen)
-                })
+            itemContent(screen,
+                currentDestination?.hierarchy?.any { it.route == screen.route } == true) {
+                onPageChanged(it)
+                processBottomItemClick(navController, screen)
+            }
         }
     }
 }
@@ -121,8 +142,8 @@ private fun processBottomItemClick(
 private fun BottomBarItem(
     modifier: Modifier = Modifier,
     item: MainScreen,
-    isSelected: Boolean?,   //是否选中
-    onItemClicked: (MainScreen) -> Unit,  //按钮点击监听
+    isSelected: Boolean,   //是否选中
+    onItemClicked: OnPageChanged,  //按钮点击监听
 ) {
     Column(
         modifier = modifier.clickableWithoutInteraction { onItemClicked.invoke(item) },
@@ -132,14 +153,56 @@ private fun BottomBarItem(
             modifier = Modifier.size(35.dp),
             imageVector = item.icon,
             contentDescription = item.title,
-            tint = if (isSelected == true) Color.Blue else Color.Gray,
+            tint = if (isSelected) Color.Blue else Color.Gray,
         )
         Text(
             text = item.title,
-            color = if (isSelected == true) Color.Blue else Color.Gray,
+            color = if (isSelected) Color.Blue else Color.Gray,
             fontSize = 12.sp,
         )
     }
+}
+
+
+@Composable
+private fun BottomNavigationComponent(
+    navController: NavHostController, onPageChanged: OnPageChanged
+) {
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.primary,
+    ) {
+        BottomNavigationBar(
+            modifier = Modifier.fillMaxWidth(),
+            navController = navController,
+            items = MainPages,
+            itemContent = { screen, isSelected, onItemClicked ->
+                BottomNavigationComponent(
+                    item = screen, isSelected = isSelected, onItemClicked = onItemClicked
+                )
+            },
+            onPageChanged = onPageChanged
+        )
+    }
+}
+
+@Composable
+private fun RowScope.BottomNavigationComponent(
+    modifier: Modifier = Modifier,
+    item: MainScreen,
+    isSelected: Boolean,   //是否选中
+    onItemClicked: OnPageChanged,  //按钮点击监听
+) {
+    BottomNavigationItem(modifier = modifier,
+        icon = { Icon(item.icon, contentDescription = null) },
+        label = { Text(item.title) },
+        selectedContentColor = Color.Blue,
+        unselectedContentColor = Color.Gray,
+        //与层次结构进行比较来确定是否被选中
+        selected = isSelected,
+        onClick = {
+            onItemClicked.invoke(item)
+        })
 }
 
 /**
@@ -153,3 +216,5 @@ inline fun Modifier.clickableWithoutInteraction(crossinline onClick: () -> Unit)
             onClick()
         }
     }
+
+typealias OnPageChanged = (MainScreen) -> Unit
