@@ -10,14 +10,21 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.xuexiang.composedemo.ui.page.basic.BasicScreen
 import com.xuexiang.composedemo.ui.page.basic.CompositionLocalScreen
+import com.xuexiang.composedemo.ui.page.basic.DefaultArgumentScreen
 import com.xuexiang.composedemo.ui.page.basic.ModifyScreen
+import com.xuexiang.composedemo.ui.page.basic.NavigationScreen
+import com.xuexiang.composedemo.ui.page.basic.TypeArgumentScreen
 import com.xuexiang.composedemo.ui.page.component.ButtonScreen
 import com.xuexiang.composedemo.ui.page.component.ComponentScreen
 import com.xuexiang.composedemo.ui.page.component.DialogScreen
@@ -33,6 +40,8 @@ import com.xuexiang.composedemo.ui.page.profile.ProfileScreen
 import com.xuexiang.composedemo.ui.widget.BackAreaTemplate
 
 
+const val ARGUMENT_KEY = "argument_key"
+
 open class Screen(val route: String, val title: String)
 
 sealed class MainScreen(route: String, title: String, val icon: ImageVector) :
@@ -41,6 +50,11 @@ sealed class MainScreen(route: String, title: String, val icon: ImageVector) :
     data object Component : MainScreen("component", "组件", Icons.Outlined.Notifications)
     data object Basic : MainScreen("basic", "基础", Icons.Outlined.DateRange)
     data object Profile : MainScreen("profile", "我的", Icons.Outlined.AccountCircle)
+}
+
+sealed class TestScreen(route: String, title: String) : Screen(route, title) {
+    data object DefaultArgument : TestScreen("test/default_argument/{$ARGUMENT_KEY}", "默认类型参数页面")
+    data object TypeArgument : TestScreen("test/type_argument/{$ARGUMENT_KEY}", "指定类型参数页面")
 }
 
 
@@ -62,7 +76,9 @@ sealed class ComponentScreen(route: String, title: String) : Screen(route, title
 
 sealed class BasicScreen(route: String, title: String) : Screen(route, title) {
     data object Modify : BasicScreen("basic/modify", "修饰符:modifier")
-    data object CompositionLocal : BasicScreen("basic/composition_local", "隐式数据传递:CompositionLocal")
+    data object CompositionLocal :
+        BasicScreen("basic/composition_local", "隐式数据传递:CompositionLocal")
+    data object Navigation : BasicScreen("basic/navigation", "页面导航:Navigation")
 }
 
 
@@ -85,8 +101,7 @@ val ComponentPages = listOf(
 )
 
 val BasicPages = listOf(
-    BasicScreen.Modify,
-    BasicScreen.CompositionLocal
+    BasicScreen.Modify, BasicScreen.CompositionLocal, BasicScreen.Navigation
 )
 
 
@@ -95,13 +110,26 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
     NavHost(
         navController, startDestination = MainScreen.Home.route, modifier = modifier.fillMaxWidth()
     ) {
+        //======MainScreen========//
         composable(MainScreen.Home.route) { HomeScreen(navController) }
         composable(MainScreen.Component.route) { ComponentScreen(navController) }
         composable(MainScreen.Profile.route) { ProfileScreen(navController) }
         composable(MainScreen.Basic.route) { BasicScreen(navController) }
 
+        //======TestScreen, 页面路由导航参数演示========//
+        composableScreen(TestScreen.DefaultArgument, navController) { backStackEntry ->
+            DefaultArgumentScreen(backStackEntry.arguments?.getString(ARGUMENT_KEY) ?: "")
+        }
+        composableScreen(TestScreen.TypeArgument, navController, arguments = listOf(navArgument(ARGUMENT_KEY) { type = NavType.IntType })) { backStackEntry ->
+            TypeArgumentScreen(backStackEntry.arguments?.getInt(ARGUMENT_KEY) ?: 0)
+        }
+
+        //======HomeScreen========//
+
         composableScreen(HomeScreen.ListTest, navController) { ListTestScreen() }
         composableScreen(HomeScreen.CommonTest, navController) { CommonTestScreen() }
+
+        //======ComponentScreen========//
 
         composableScreen(ComponentScreen.Text, navController) { TextScreen() }
         composableScreen(ComponentScreen.Button, navController) { ButtonScreen() }
@@ -109,13 +137,17 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         composableScreen(ComponentScreen.Dialog, navController) { DialogScreen() }
         composableScreen(ComponentScreen.ImageLoad, navController) { ImageLoadScreen() }
         composableScreen(
-            ComponentScreen.ProgressIndicator,
-            navController
+            ComponentScreen.ProgressIndicator, navController
         ) { ProgressIndicatorScreen() }
         composableScreen(ComponentScreen.Switch, navController) { SwitchScreen() }
 
+        //======BasicScreen========//
+
         composableScreen(BasicScreen.Modify, navController) { ModifyScreen() }
         composableScreen(BasicScreen.CompositionLocal, navController) { CompositionLocalScreen() }
+        composableScreen(BasicScreen.Navigation, navController) { NavigationScreen(navController) }
+
+
     }
 }
 
@@ -126,11 +158,16 @@ fun NavController.navigationTo(screen: Screen) {
 fun NavGraphBuilder.composableScreen(
     screen: Screen,
     navController: NavController,
-    content: @Composable ColumnScope.() -> Unit
+    arguments: List<NamedNavArgument> = emptyList(),
+    content: @Composable ColumnScope.(NavBackStackEntry) -> Unit
 ) {
-    composable(screen.route) {
+    composable(
+        route = screen.route, arguments = arguments
+    ) { backStackEntry ->
         BackAreaTemplate(
-            title = screen.title, navController = navController, content = content
-        )
+            title = screen.title, navController = navController
+        ) {
+            content(backStackEntry)
+        }
     }
 }
