@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.xuexiang.composedemo.ui.page.basic.BasicScreen
+import com.xuexiang.composedemo.ui.page.basic.CompositionLocalScreen
 import com.xuexiang.composedemo.ui.page.basic.ModifyScreen
 import com.xuexiang.composedemo.ui.page.component.ButtonScreen
 import com.xuexiang.composedemo.ui.page.component.ComponentScreen
@@ -60,7 +61,8 @@ sealed class ComponentScreen(route: String, title: String) : Screen(route, title
 }
 
 sealed class BasicScreen(route: String, title: String) : Screen(route, title) {
-    data object Modify : BasicScreen("basic/modify", "修饰符")
+    data object Modify : BasicScreen("basic/modify", "修饰符:modifier")
+    data object CompositionLocal : BasicScreen("basic/composition_local", "隐式数据传递:CompositionLocal")
 }
 
 
@@ -83,7 +85,8 @@ val ComponentPages = listOf(
 )
 
 val BasicPages = listOf(
-    BasicScreen.Modify
+    BasicScreen.Modify,
+    BasicScreen.CompositionLocal
 )
 
 
@@ -112,6 +115,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         composableScreen(ComponentScreen.Switch, navController) { SwitchScreen() }
 
         composableScreen(BasicScreen.Modify, navController) { ModifyScreen() }
+        composableScreen(BasicScreen.CompositionLocal, navController) { CompositionLocalScreen() }
     }
 }
 
