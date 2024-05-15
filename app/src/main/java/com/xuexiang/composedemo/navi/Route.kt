@@ -24,6 +24,7 @@ import com.xuexiang.composedemo.ui.page.basic.CompositionLocalScreen
 import com.xuexiang.composedemo.ui.page.basic.DefaultArgumentScreen
 import com.xuexiang.composedemo.ui.page.basic.ModifyScreen
 import com.xuexiang.composedemo.ui.page.basic.NavigationScreen
+import com.xuexiang.composedemo.ui.page.basic.OptionalArgumentScreen
 import com.xuexiang.composedemo.ui.page.basic.TypeArgumentScreen
 import com.xuexiang.composedemo.ui.page.component.ButtonScreen
 import com.xuexiang.composedemo.ui.page.component.ComponentScreen
@@ -38,9 +39,12 @@ import com.xuexiang.composedemo.ui.page.home.test.CommonTestScreen
 import com.xuexiang.composedemo.ui.page.home.test.ListTestScreen
 import com.xuexiang.composedemo.ui.page.profile.ProfileScreen
 import com.xuexiang.composedemo.ui.widget.BackAreaTemplate
+import com.xuexiang.composedemo.ui.widget.argument
+import com.xuexiang.composedemo.ui.widget.argumentOptional
 
 
 const val ARGUMENT_KEY = "argument_key"
+const val ARGUMENT_KEY2 = "argument_key2"
 
 open class Screen(val route: String, val title: String)
 
@@ -53,10 +57,10 @@ sealed class MainScreen(route: String, title: String, val icon: ImageVector) :
 }
 
 sealed class TestScreen(route: String, title: String) : Screen(route, title) {
-    data object DefaultArgument : TestScreen("test/default_argument/{$ARGUMENT_KEY}", "默认类型参数页面")
-    data object TypeArgument : TestScreen("test/type_argument/{$ARGUMENT_KEY}", "指定类型参数页面")
+    data object DefaultArgument : TestScreen("test/default_argument/${ARGUMENT_KEY.argument()}", "默认类型参数页面")
+    data object TypeArgument : TestScreen("test/type_argument/${ARGUMENT_KEY.argument()}", "指定类型参数页面")
+    data object OptionalArgument : TestScreen("test/optional_argument?${ARGUMENT_KEY.argumentOptional()}&${ARGUMENT_KEY2.argumentOptional()}", "可选参数页面")
 }
-
 
 sealed class HomeScreen(route: String, title: String) : Screen(route, title) {
     data object ListTest : HomeScreen("home/list_test", "列表测试")
@@ -120,8 +124,29 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         composableScreen(TestScreen.DefaultArgument, navController) { backStackEntry ->
             DefaultArgumentScreen(backStackEntry.arguments?.getString(ARGUMENT_KEY) ?: "")
         }
-        composableScreen(TestScreen.TypeArgument, navController, arguments = listOf(navArgument(ARGUMENT_KEY) { type = NavType.IntType })) { backStackEntry ->
+        composableScreen(
+            TestScreen.TypeArgument,
+            navController,
+            arguments = listOf(navArgument(ARGUMENT_KEY) { type = NavType.IntType })
+        ) { backStackEntry ->
             TypeArgumentScreen(backStackEntry.arguments?.getInt(ARGUMENT_KEY) ?: 0)
+        }
+        composableScreen(
+            TestScreen.OptionalArgument, navController, arguments = listOf(
+                navArgument(ARGUMENT_KEY) {
+                    type = NavType.IntType
+                    defaultValue = 1234
+                },
+                navArgument(ARGUMENT_KEY2) {
+                    type = NavType.StringType
+                    defaultValue = "这是参数默认值"
+                },
+            )
+        ) { backStackEntry ->
+            OptionalArgumentScreen(
+                backStackEntry.arguments?.getInt(ARGUMENT_KEY) ?: 0,
+                backStackEntry.arguments?.getString(ARGUMENT_KEY2) ?: ""
+            )
         }
 
         //======HomeScreen========//

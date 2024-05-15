@@ -21,3 +21,8 @@ fun rainbowBrush() = Brush.sweepGradient(
         Color(0xFF9575CD)
     )
 )
+
+fun String.argument() = "{$this}"
+fun String.argumentOptional() = "$this={$this}"
+
+fun String.argumentOptionalValue(value: Any) = "$this=$value"

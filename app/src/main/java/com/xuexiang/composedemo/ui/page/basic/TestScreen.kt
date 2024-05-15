@@ -20,3 +20,10 @@ fun TypeArgumentScreen(argument: Int) {
         Text(text = "页面参数+5 = ${argument + 5}")
     }
 }
+
+@Composable
+fun OptionalArgumentScreen(argument: Int, argument2: String) {
+    ScrollColumnArea {
+        Text(text = "页面参数1 = $argument, 页面参数2 = $argument2")
+    }
+}

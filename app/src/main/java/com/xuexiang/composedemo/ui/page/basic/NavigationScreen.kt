@@ -4,10 +4,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import com.xuexiang.composedemo.navi.ARGUMENT_KEY
 import com.xuexiang.composedemo.ui.widget.ScrollColumnArea
+import com.xuexiang.composedemo.ui.widget.argumentOptionalValue
 
 /**
  * https://developer.android.com/develop/ui/compose/navigation?hl=zh-cn
+ *
+ * 可选参数: Destination+?+{名称=参数值的key}&{名称=参数值的key}
+ * 注意参数与参数间一定要以“&”进行分隔
  */
 @Composable
 fun NavigationScreen(navController: NavController) {
@@ -25,5 +30,12 @@ fun NavigationScreen(navController: NavController) {
             Text("指定类型参数页面")
         }
 
+        Button(onClick = {
+            navController.navigate(
+                "test/optional_argument?${ARGUMENT_KEY.argumentOptionalValue(4321)}"
+            )
+        }) {
+            Text("可选参数页面")
+        }
     }
 }
