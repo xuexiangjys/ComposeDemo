@@ -32,12 +32,25 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun ScrollColumnArea(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+fun ScrollColumnArea(
+    modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit
+) {
     Column(
         modifier = modifier
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun ColumnArea(
+    modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         content()
     }

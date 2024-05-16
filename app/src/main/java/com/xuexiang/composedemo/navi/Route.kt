@@ -30,6 +30,7 @@ import com.xuexiang.composedemo.ui.page.component.ButtonScreen
 import com.xuexiang.composedemo.ui.page.component.ComponentScreen
 import com.xuexiang.composedemo.ui.page.component.DialogScreen
 import com.xuexiang.composedemo.ui.page.component.ImageLoadScreen
+import com.xuexiang.composedemo.ui.page.component.PagerScreen
 import com.xuexiang.composedemo.ui.page.component.ProgressIndicatorScreen
 import com.xuexiang.composedemo.ui.page.component.SwitchScreen
 import com.xuexiang.composedemo.ui.page.component.TextFieldScreen
@@ -74,8 +75,9 @@ sealed class ComponentScreen(route: String, title: String) : Screen(route, title
     data object TextField : ComponentScreen("component/text_field", "输入框")
     data object ImageLoad : ComponentScreen("component/image_load", "图片加载")
     data object ProgressIndicator : ComponentScreen("component/progress_indicator", "进度条")
-    data object Switch : ComponentScreen("component/switch", "开关")
     data object Dialog : ComponentScreen("component/dialog", "对话框")
+    data object Switch : ComponentScreen("component/switch", "开关")
+    data object Pager : ComponentScreen("component/pager", "分页器")
 }
 
 sealed class BasicScreen(route: String, title: String) : Screen(route, title) {
@@ -102,6 +104,7 @@ val ComponentPages = listOf(
     ComponentScreen.ImageLoad,
     ComponentScreen.ProgressIndicator,
     ComponentScreen.Switch,
+    ComponentScreen.Pager
 )
 
 val BasicPages = listOf(
@@ -165,6 +168,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
             ComponentScreen.ProgressIndicator, navController
         ) { ProgressIndicatorScreen() }
         composableScreen(ComponentScreen.Switch, navController) { SwitchScreen() }
+        composableScreen(ComponentScreen.Pager, navController) { PagerScreen() }
 
         //======BasicScreen========//
 
