@@ -36,6 +36,7 @@ import com.xuexiang.composedemo.ui.page.component.SwitchScreen
 import com.xuexiang.composedemo.ui.page.component.TextFieldScreen
 import com.xuexiang.composedemo.ui.page.component.TextScreen
 import com.xuexiang.composedemo.ui.page.expands.ExpandsScreen
+import com.xuexiang.composedemo.ui.page.expands.NestedScrollScreen
 import com.xuexiang.composedemo.ui.page.expands.ScaffoldScreen
 import com.xuexiang.composedemo.ui.page.home.HomeScreen
 import com.xuexiang.composedemo.ui.page.home.test.CommonTestScreen
@@ -98,6 +99,7 @@ sealed class BasicScreen(route: String, title: String) : Screen(route, title) {
 
 sealed class ExpandsScreen(route: String, title: String) : Screen(route, title) {
     data object Scaffold : ExpandsScreen("expands/scaffold", "脚手架:Scaffold")
+    data object NestedScroll : ExpandsScreen("expands/nestedScroll", "嵌套滑动:NestedScroll")
 }
 
 
@@ -125,7 +127,8 @@ val BasicPages = listOf(
 )
 
 val ExpandsPages = listOf(
-    ExpandsScreen.Scaffold
+    ExpandsScreen.Scaffold,
+    ExpandsScreen.NestedScroll
 )
 
 @Composable
@@ -195,6 +198,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         //======ExpandsScreen========//
 
         composableScreen(ExpandsScreen.Scaffold, navController, false) { ScaffoldScreen() }
+        composableScreen(ExpandsScreen.NestedScroll, navController, false) { NestedScrollScreen() }
     }
 }
 

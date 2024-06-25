@@ -21,6 +21,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,14 +37,19 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.xuexiang.composedemo.ui.widget.LocalCardStyle
+import com.xuexiang.composedemo.ui.widget.LocalConfig
+import com.xuexiang.composedemo.ui.widget.LocalNavController
 
 @Composable
 fun AppRoot() {
     val navController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
     var title by remember { mutableStateOf(MainScreen.Home.title) }
-
-    Scaffold(
+    CompositionLocalProvider(
+        LocalNavController provides navController
+    ) {
+        Scaffold(
 //        topBar = {
 //            CenterAlignedTopAppBar(
 //                colors = TopAppBarDefaults.topAppBarColors(
@@ -55,19 +61,20 @@ fun AppRoot() {
 //                }
 //            )
 //        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
-        },
-        bottomBar = {
-            BottomAppBarComponent(navController) {
-                title = it.title
-            }
+            snackbarHost = {
+                SnackbarHost(hostState = snackBarHostState)
+            },
+            bottomBar = {
+                BottomAppBarComponent(navController) {
+                    title = it.title
+                }
 //            BottomNavigationComponent(navController) {
 //                title = it.title
 //            }
-        },
-    ) { innerPadding ->
-        MainNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
+            },
+        ) { innerPadding ->
+            MainNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
+        }
     }
 }
 
