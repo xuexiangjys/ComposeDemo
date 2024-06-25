@@ -29,22 +29,25 @@ import androidx.navigation.NavController
 @Composable
 fun BackAreaTemplate(
     title: String,
+    hasTitle: Boolean = true,
     navController: NavController,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column {
-        CenterAlignedTopAppBar(colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-        ), title = {
-            Text(title)
-        }, navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack, contentDescription = "back button"
-                )
-            }
-        })
+        if (hasTitle) {
+            CenterAlignedTopAppBar(colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ), title = {
+                Text(title)
+            }, navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack, contentDescription = "back button"
+                    )
+                }
+            })
+        }
         content()
     }
 }
