@@ -26,6 +26,7 @@ import com.xuexiang.composedemo.ui.page.basic.ModifyScreen
 import com.xuexiang.composedemo.ui.page.basic.NavigationScreen
 import com.xuexiang.composedemo.ui.page.basic.OptionalArgumentScreen
 import com.xuexiang.composedemo.ui.page.basic.TypeArgumentScreen
+import com.xuexiang.composedemo.ui.page.basic.User
 import com.xuexiang.composedemo.ui.page.component.ButtonScreen
 import com.xuexiang.composedemo.ui.page.component.ComponentScreen
 import com.xuexiang.composedemo.ui.page.component.DialogScreen
@@ -42,12 +43,14 @@ import com.xuexiang.composedemo.ui.page.home.HomeScreen
 import com.xuexiang.composedemo.ui.page.home.test.CommonTestScreen
 import com.xuexiang.composedemo.ui.page.home.test.ListTestScreen
 import com.xuexiang.composedemo.ui.widget.BackAreaTemplate
-import com.xuexiang.composedemo.ui.widget.argument
-import com.xuexiang.composedemo.ui.widget.argumentOptional
+import com.xuexiang.composedemo.ui.widget.createSerializableNavType
+import com.xuexiang.composedemo.ui.widget.getArgumentFormat
+import com.xuexiang.composedemo.ui.widget.getOptionalArgumentFormat
 
 
 const val ARGUMENT_KEY = "argument_key"
 const val ARGUMENT_KEY2 = "argument_key2"
+const val ARGUMENT_KEY3 = "argument_key3"
 
 open class Screen(val route: String, val title: String)
 
@@ -60,15 +63,22 @@ sealed class MainScreen(route: String, title: String, val icon: ImageVector) :
 }
 
 sealed class TestScreen(route: String, title: String) : Screen(route, title) {
-    data object DefaultArgument :
-        TestScreen("test/default_argument/${ARGUMENT_KEY.argument()}", "默认类型参数页面")
+    data object DefaultArgument : TestScreen(
+        "test/default_argument" + getArgumentFormat(ARGUMENT_KEY),
+        "(必选参数)默认类型参数页面"
+    )
 
-    data object TypeArgument :
-        TestScreen("test/type_argument/${ARGUMENT_KEY.argument()}", "指定类型参数页面")
+    data object TypeArgument : TestScreen(
+        "test/type_argument" + getArgumentFormat(ARGUMENT_KEY, ARGUMENT_KEY2),
+        "(必选参数)指定类型参数页面"
+    )
 
     data object OptionalArgument : TestScreen(
-        "test/optional_argument?${ARGUMENT_KEY.argumentOptional()}&${ARGUMENT_KEY2.argumentOptional()}",
-        "可选参数页面"
+        "test/optional_argument" + getOptionalArgumentFormat(
+            ARGUMENT_KEY,
+            ARGUMENT_KEY2,
+            ARGUMENT_KEY3
+        ), "(可选参数)多种参数传递页面"
     )
 }
 
@@ -127,8 +137,7 @@ val BasicPages = listOf(
 )
 
 val ExpandsPages = listOf(
-    ExpandsScreen.Scaffold,
-    ExpandsScreen.NestedScroll
+    ExpandsScreen.Scaffold, ExpandsScreen.NestedScroll
 )
 
 @Composable
@@ -144,14 +153,17 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
 
         //======TestScreen, 页面路由导航参数演示========//
         composableScreen(TestScreen.DefaultArgument, navController) { backStackEntry ->
-            DefaultArgumentScreen(backStackEntry.arguments?.getString(ARGUMENT_KEY) ?: "")
+            DefaultArgumentScreen( backStackEntry.arguments?.getString(ARGUMENT_KEY) ?: "")
         }
         composableScreen(
             TestScreen.TypeArgument,
             navController,
-            arguments = listOf(navArgument(ARGUMENT_KEY) { type = NavType.IntType })
+            arguments = listOf(navArgument(ARGUMENT_KEY2) { type = NavType.IntType })
         ) { backStackEntry ->
-            TypeArgumentScreen(backStackEntry.arguments?.getInt(ARGUMENT_KEY) ?: 0)
+            TypeArgumentScreen(
+                argument1 = backStackEntry.arguments?.getString(ARGUMENT_KEY) ?: "",
+                argument2 = backStackEntry.arguments?.getInt(ARGUMENT_KEY2) ?: 0
+            )
         }
         composableScreen(
             TestScreen.OptionalArgument, navController, arguments = listOf(
@@ -163,11 +175,15 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier = Modifier)
                     type = NavType.StringType
                     defaultValue = "这是参数默认值"
                 },
+                navArgument(ARGUMENT_KEY3) {
+                    type = createSerializableNavType<User>()
+                },
             )
         ) { backStackEntry ->
             OptionalArgumentScreen(
-                backStackEntry.arguments?.getInt(ARGUMENT_KEY) ?: 0,
-                backStackEntry.arguments?.getString(ARGUMENT_KEY2) ?: ""
+                argument = backStackEntry.arguments?.getInt(ARGUMENT_KEY) ?: 0,
+                argument2 = backStackEntry.arguments?.getString(ARGUMENT_KEY2) ?: "",
+                user = backStackEntry.arguments?.getSerializable(ARGUMENT_KEY3) as? User
             )
         }
 

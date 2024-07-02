@@ -17,15 +17,20 @@ import androidx.navigation.NavController
 import com.xuexiang.composedemo.TestActivity
 import com.xuexiang.composedemo.navi.ARGUMENT_KEY
 import com.xuexiang.composedemo.navi.ARGUMENT_KEY2
+import com.xuexiang.composedemo.navi.ARGUMENT_KEY3
 import com.xuexiang.composedemo.ui.widget.ScrollColumnArea
-import com.xuexiang.composedemo.ui.widget.argumentOptionalValue
+import com.xuexiang.composedemo.ui.widget.putOptionalArguments
 import kotlinx.coroutines.launch
 
 /**
  * https://developer.android.com/develop/ui/compose/navigation?hl=zh-cn
  *
+ * 必选参数: Destination/{参数值的key}/{参数值的key}
  * 可选参数: Destination+?+{名称=参数值的key}&{名称=参数值的key}
  * 注意参数与参数间一定要以“&”进行分隔
+ *
+ * 必选参数只支持基础类型的参数.
+ * 非基础类型参数,如Serializable等对象,只支持可选参数.
  */
 @Composable
 fun NavigationScreen(navController: NavController) {
@@ -42,25 +47,38 @@ fun NavigationScreen(navController: NavController) {
         }
 
     ScrollColumnArea {
-
         Button(onClick = {
             navController.navigate("test/default_argument/这个是我传入的参数")
         }) {
-            Text("默认类型参数页面路由")
+            Text("(必选参数)默认类型参数页面")
         }
 
         Button(onClick = {
-            navController.navigate("test/type_argument/1234")
+//            navController.navigate(
+//                "test/type_argument" + putArguments(
+//                    listOf(
+//                        "默认参数是String类型", 54321
+//                    )
+//                )
+//            )
+            navController.navigate(
+                "test/type_argument/默认参数是String类型/54321"
+            )
         }) {
-            Text("指定类型参数页面")
+            Text("(必选参数)指定类型参数页面")
         }
 
         Button(onClick = {
             navController.navigate(
-                "test/optional_argument?${ARGUMENT_KEY.argumentOptionalValue(4321)}"
+                "test/optional_argument" + putOptionalArguments(
+                    mapOf(
+                        ARGUMENT_KEY to 4321,
+                        ARGUMENT_KEY3 to User("张三", 25)
+                    )
+                )
             )
         }) {
-            Text("可选参数页面")
+            Text("(可选参数)多种参数传递页面")
         }
 
         Button(onClick = {
